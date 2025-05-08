@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../../utils/constants.dart';
 import '../../widgets/library/playlist_item.dart';
 import '../../services/auth_service.dart';
+import '../../services/download_service.dart';
 import '../../widgets/home/featured_playlist_item.dart';
+import 'downloaded_albums_screen.dart';
 
 // Định nghĩa enum cho các loại mục
 enum LibraryItemType {
@@ -22,6 +24,42 @@ class LibraryScreen extends StatefulWidget {
 class _LibraryScreenState extends State<LibraryScreen> {
   final AuthService _authService = AuthService();
   LibraryItemType _currentType = LibraryItemType.music;
+  
+  @override
+  void initState() {
+    super.initState();
+    // Add any initialization if needed
+  }
+
+  // Handle tab changes, directly navigate to downloaded albums when download tab is selected
+  void _handleTabChange(LibraryItemType newType) {
+    setState(() {
+      _currentType = newType;
+    });
+    
+    // If the "Downloads" tab is selected, navigate to the downloaded albums screen
+    if (newType == LibraryItemType.downloaded) {
+      // Use a small delay to allow the state to update first
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const DownloadedAlbumsScreen(),
+            ),
+          ).then((_) {
+            // When returning from downloaded albums screen, switch back to music tab
+            // to avoid immediate re-navigation
+            if (mounted && _currentType == LibraryItemType.downloaded) {
+              setState(() {
+                _currentType = LibraryItemType.music;
+              });
+            }
+          });
+        }
+      });
+    }
+  }
 
   void _showUserMenu(BuildContext context) {
     showModalBottomSheet(
@@ -90,31 +128,37 @@ class _LibraryScreenState extends State<LibraryScreen> {
   // Dữ liệu mẫu cho các mục nhạc - đồng bộ từ Radio phổ biến
   final List<Map<String, String>> _musicItems = [
     {
+      'id': 'playlist_thinh_suy',
       'title': 'Với Thịnh Suy, Da LAB, Chillies và nhiều hơn nữa',
       'description': 'Playlist • Spotify',
       'imageAsset': 'assets/images/vu.png',
     },
     {
+      'id': 'playlist_hieuthuhai',
       'title': 'Với HIEUTHUHAI, Ronboogz, MANBO và nhiều hơn nữa',
       'description': 'Playlist • Spotify',
       'imageAsset': 'assets/images/bray.png',
     },
     {
+      'id': 'playlist_tlinh',
       'title': 'Với tlinh, RPT MCK, Wxrdie và nhiều hơn nữa',
       'description': 'Playlist • Spotify',
       'imageAsset': 'assets/images/low.png',
     },
     {
+      'id': 'playlist_mck',
       'title': 'Với RPT MCK, Wren Evans, GREY D và nhiều hơn nữa',
       'description': 'Playlist • Spotify',
       'imageAsset': 'assets/images/tli.png',
     },
     {
+      'id': 'playlist_soobin',
       'title': 'Với SOOBIN, HIEUTHUHAI, JustaTee và nhiều hơn nữa',
       'description': 'Playlist • Spotify',
       'imageAsset': 'assets/images/st.png',
     },
     {
+      'id': 'playlist_anh_tuan',
       'title': 'Với Bùi Anh Tuấn, Vũ., Noo Phước Thịnh và nhiều hơn nữa',
       'description': 'Playlist • Spotify',
       'imageAsset': 'assets/images/ha.png',
@@ -124,31 +168,37 @@ class _LibraryScreenState extends State<LibraryScreen> {
   // Dữ liệu mẫu cho các nghệ sĩ - đồng bộ từ Nghệ sĩ nổi bật
   final List<Map<String, String>> _artistItems = [
     {
+      'id': 'artist_vu',
       'title': 'Vũ',
       'description': 'Nghệ sĩ',
       'imageAsset': 'assets/images/vf.png',
     },
     {
+      'id': 'artist_den_vau',
       'title': 'Đen Vâu',
       'description': 'Nghệ sĩ',
       'imageAsset': 'assets/images/den.png',
     },
     {
+      'id': 'artist_bray',
       'title': 'Bray',
       'description': 'Nghệ sĩ',
       'imageAsset': 'assets/images/br.png',
     },
     {
+      'id': 'artist_hieuthuhai',
       'title': 'Hieuthuhai',
       'description': 'Nghệ sĩ',
       'imageAsset': 'assets/images/h2.png',
     },
     {
+      'id': 'artist_tlinh',
       'title': 'Tlinh',
       'description': 'Nghệ sĩ',
       'imageAsset': 'assets/images/t.png',
     },
     {
+      'id': 'artist_amee',
       'title': 'Amee',
       'description': 'Nghệ sĩ',
       'imageAsset': 'assets/images/ame.png',
@@ -158,21 +208,25 @@ class _LibraryScreenState extends State<LibraryScreen> {
   // Dữ liệu mẫu cho các album - đồng bộ từ Album và đĩa nổi tiếng
   final List<Map<String, String>> _albumItems = [
     {
+      'id': 'album_rosie',
       'title': 'Rosie',
       'description': 'Album • Coldplay, Maroon 5, Imagine Dragons',
       'imageAsset': 'assets/images/rosie.png',
     },
     {
+      'id': 'album_discover_weekly',
       'title': 'Discover Weekly',
       'description': 'Album • Your weekly mixtape of fresh music',
       'imageAsset': 'assets/images/dd.png',
     },
     {
+      'id': 'album_jumping_machine',
       'title': 'Jumping machine',
       'description': 'Album • New music from artists you follow',
       'imageAsset': 'assets/images/JP.png',
     },
     {
+      'id': 'album_bao_tang',
       'title': 'Bảo Tàng Của Nuối Tiếc',
       'description': 'Album • New music from artists you follow',
       'imageAsset': 'assets/images/tn.png',
@@ -182,6 +236,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
   // Danh sách dummy cho các mục đã tải xuống
   final List<Map<String, String>> _downloadedItems = [
     {
+      'id': 'downloads_folder',
       'title': 'Nhạc đã tải',
       'description': 'Playlist • Offline',
       'imageAsset': 'assets/icons/f.png',
@@ -262,9 +317,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       selected: _currentType == LibraryItemType.music,
                       onSelected: (selected) {
                         if (selected) {
-                          setState(() {
-                            _currentType = LibraryItemType.music;
-                          });
+                          _handleTabChange(LibraryItemType.music);
                         }
                       },
                       backgroundColor: Colors.white.withOpacity(0.1),
@@ -287,9 +340,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       selected: _currentType == LibraryItemType.artist,
                       onSelected: (selected) {
                         if (selected) {
-                          setState(() {
-                            _currentType = LibraryItemType.artist;
-                          });
+                          _handleTabChange(LibraryItemType.artist);
                         }
                       },
                       backgroundColor: Colors.white.withOpacity(0.1),
@@ -312,9 +363,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       selected: _currentType == LibraryItemType.album,
                       onSelected: (selected) {
                         if (selected) {
-                          setState(() {
-                            _currentType = LibraryItemType.album;
-                          });
+                          _handleTabChange(LibraryItemType.album);
                         }
                       },
                       backgroundColor: Colors.white.withOpacity(0.1),
@@ -337,9 +386,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       selected: _currentType == LibraryItemType.downloaded,
                       onSelected: (selected) {
                         if (selected) {
-                          setState(() {
-                            _currentType = LibraryItemType.downloaded;
-                          });
+                          _handleTabChange(LibraryItemType.downloaded);
                         }
                       },
                       backgroundColor: Colors.white.withOpacity(0.1),
@@ -457,7 +504,43 @@ class _LibraryScreenState extends State<LibraryScreen> {
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           final item = items[index];
+          
+          // Special handling for downloads folder - navigate to downloads screen
+          if (item['id'] == 'downloads_folder') {
+            return ListTile(
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: Image.asset(
+                  item['imageAsset']!,
+                  width: 65,
+                  height: 65,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              title: Text(
+                item['title']!,
+                style: AppTextStyles.bodyText.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              subtitle: Text(
+                item['description']!,
+                style: AppTextStyles.smallText,
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DownloadedAlbumsScreen(),
+                  ),
+                );
+              },
+            );
+          }
+          
+          // Regular playlist items
           return PlaylistItem(
+            id: item['id']!,
             title: item['title']!,
             description: item['description']!,
             imageAsset: item['imageAsset']!,

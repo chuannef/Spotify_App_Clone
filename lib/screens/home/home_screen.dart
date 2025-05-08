@@ -106,24 +106,28 @@ class HomeScreen extends StatelessWidget {
                 height: 210,
                 children: const [
                   FeaturedPlaylistItem(
+                    id: 'album_rosie',
                     title: 'Rosie',
                     description: 'Coldplay, Maroon 5, Imagine Dragons and more',
                     imageAsset: 'assets/images/rosie.png',
                   ),
                   SizedBox(width: 16),
                   FeaturedPlaylistItem(
+                    id: 'album_discover_weekly',
                     title: 'Discover Weekly',
                     description: 'Your weekly mixtape of fresh music',
                     imageAsset: 'assets/images/dd.png',
                   ),
                   SizedBox(width: 16),
                   FeaturedPlaylistItem(
+                    id: 'album_jumping_machine',
                     title: 'Jumping machine',
                     description: 'New music from artists you follow',
                     imageAsset: 'assets/images/JP.png',
                   ),
                   SizedBox(width: 16),
                   FeaturedPlaylistItem(
+                    id: 'album_bao_tang',
                     title: 'Bảo Tàng Của Nuối Tiếc',
                     description: 'New music from artists you follow',
                     imageAsset: 'assets/images/tn.png',
@@ -142,6 +146,7 @@ class HomeScreen extends StatelessWidget {
                 height: 210,
                 children: const [
                   FeaturedPlaylistItem(
+                    id: 'artist_vu',
                     title: 'Vũ',
                     description: 'Nghệ sĩ',
                     imageAsset: 'assets/images/vf.png',
@@ -149,6 +154,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   SizedBox(width: 16),
                   FeaturedPlaylistItem(
+                    id: 'artist_den_vau',
                     title: 'Đen Vâu',
                     description: 'Nghệ sĩ',
                     imageAsset: 'assets/images/den.png',
@@ -156,6 +162,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   SizedBox(width: 16),
                   FeaturedPlaylistItem(
+                    id: 'artist_bray',
                     title: 'Bray',
                     description: 'Nghệ sĩ',
                     imageAsset: 'assets/images/br.png',
@@ -163,6 +170,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   SizedBox(width: 16),
                   FeaturedPlaylistItem(
+                    id: 'artist_hieuthuhai',
                     title: 'Hieuthuhai',
                     description: 'Nghệ sĩ',
                     imageAsset: 'assets/images/h2.png',
@@ -170,6 +178,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   SizedBox(width: 16),
                   FeaturedPlaylistItem(
+                    id: 'artist_tlinh',
                     title: 'Tlinh',
                     description: 'Nghệ sĩ',
                     imageAsset: 'assets/images/t.png',
@@ -177,6 +186,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   SizedBox(width: 16),
                   FeaturedPlaylistItem(
+                    id: 'artist_amee',
                     title: 'Amee',
                     description: 'Nghệ sĩ',
                     imageAsset: 'assets/images/ame.png',

@@ -8,12 +8,14 @@ class FeaturedPlaylistItem extends StatelessWidget {
   final String description;
   final String imageAsset;
   final bool isCircular; // Thêm thuộc tính để chỉ định hình dạng
+  final String id; // Added album ID parameter
 
   const FeaturedPlaylistItem({
     super.key,
     required this.title,
     required this.description,
     required this.imageAsset,
+    required this.id, // Make id required
     this.isCircular = false, // Mặc định là hình vuông
   });
 
@@ -35,6 +37,7 @@ class FeaturedPlaylistItem extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => AlbumDetailScreen(
+                          id: id, // Pass the album ID
                           title: title,
                           description: description,
                           imageAsset: imageAsset,

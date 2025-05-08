@@ -4,12 +4,14 @@ import '../../screens/album_detail_screen.dart';
 import '../../screens/player_screen.dart';
 
 class PlaylistItem extends StatelessWidget {
+  final String id; // Added album ID parameter
   final String title;
   final String description;
   final String imageAsset;
 
   const PlaylistItem({
     super.key,
+    required this.id, // Make id required
     required this.title,
     required this.description,
     required this.imageAsset,
@@ -24,6 +26,7 @@ class PlaylistItem extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => AlbumDetailScreen(
+              id: id, // Pass the ID to AlbumDetailScreen
               title: title,
               description: description, 
               imageAsset: imageAsset,

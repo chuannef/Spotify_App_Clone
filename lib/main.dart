@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/main_screen.dart';
 import 'services/auth_service.dart';
+import 'services/favorites_service.dart';
 import 'utils/constants.dart';
 
 void main() async {
@@ -21,20 +23,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: AppStrings.appName,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: AppColors.spotifyBlack,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.spotifyGreen,
-          brightness: Brightness.dark,
-          surface: AppColors.spotifyBlack,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => FavoritesService(),
         ),
-        fontFamily: 'Gotham', // You can change this to a font similar to Spotify's
+      ],
+      child: MaterialApp(
+        title: AppStrings.appName,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          useMaterial3: true,
+          scaffoldBackgroundColor: AppColors.spotifyBlack,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: AppColors.spotifyGreen,
+            brightness: Brightness.dark,
+            surface: AppColors.spotifyBlack,
+          ),
+          fontFamily: 'Gotham', // You can change this to a font similar to Spotify's
+        ),
+        home: const AuthWrapper(),
       ),
-      home: const AuthWrapper(),
     );
   }
 }

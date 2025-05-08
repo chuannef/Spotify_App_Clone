@@ -48,9 +48,16 @@ dependencies:
   provider: ^6.1.2
   
   # UI components
-  google_fonts: ^6.1.0
-  flutter_svg: ^2.0.10+1
+  google_fonts: ^4.0.0
+  flutter_svg: ^1.1.6  # Downgraded to be compatible with http ^0.13.5
   font_awesome_flutter: ^10.7.0
+  
+  # Storage and file management
+  path_provider: ^2.1.2
+  permission_handler: ^11.3.0
+  http: ^0.13.5
+  gallery_saver: ^2.3.2
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
@@ -79,7 +86,7 @@ flutter:
     - assets/images/
     - assets/images/main/
     - assets/icons/
-  
+    - assets/sound/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

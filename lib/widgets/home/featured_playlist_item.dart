@@ -107,10 +107,10 @@ class FeaturedPlaylistItem extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => PlayerScreen(
+                          MaterialPageRoute(                            builder: (context) => PlayerScreen(
                               title: title,
                               imageAsset: imageAsset,
+                              albumTitle: title,
                             ),
                           ),
                         );

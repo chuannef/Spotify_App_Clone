@@ -106,17 +106,10 @@ class HomeScreen extends StatelessWidget {
                 height: 210,
                 children: const [
                   FeaturedPlaylistItem(
-                    id: 'album_rosie',
-                    title: 'Rosie',
-                    description: 'Coldplay, Maroon 5, Imagine Dragons and more',
-                    imageAsset: 'assets/images/rosie.png',
-                  ),
-                  SizedBox(width: 16),
-                  FeaturedPlaylistItem(
-                    id: 'album_discover_weekly',
-                    title: 'Discover Weekly',
-                    description: 'Your weekly mixtape of fresh music',
-                    imageAsset: 'assets/images/dd.png',
+                    id: 'album_show_cua_den',
+                    title: 'Show của Đen',
+                    description: 'Liveshow "Show của Đen" tại Nhà thi đấu',
+                    imageAsset: 'assets/images/den.png',
                   ),
                   SizedBox(width: 16),
                   FeaturedPlaylistItem(
@@ -131,6 +124,13 @@ class HomeScreen extends StatelessWidget {
                     title: 'Bảo Tàng Của Nuối Tiếc',
                     description: 'New music from artists you follow',
                     imageAsset: 'assets/images/tn.png',
+                  ),
+                  SizedBox(width: 16),
+                  FeaturedPlaylistItem(
+                    id: 'album_discover_weekly',
+                    title: 'Discover Weekly',
+                    description: 'Your weekly mixtape of fresh music',
+                    imageAsset: 'assets/images/dd.png',
                   ),
                 ],
               ),

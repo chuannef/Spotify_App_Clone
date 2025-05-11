@@ -89,10 +89,10 @@ class PlaylistItem extends StatelessWidget {
                         // Chuyển đến trang phát nhạc khi click vào nút play
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => PlayerScreen(
+                          MaterialPageRoute(                            builder: (context) => PlayerScreen(
                               title: title,
                               imageAsset: imageAsset,
+                              albumTitle: title,
                             ),
                           ),
                         );

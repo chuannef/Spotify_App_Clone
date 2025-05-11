@@ -28,6 +28,27 @@ class AlbumDetailScreen extends StatefulWidget {
 class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
   bool _isDownloaded = false;
 
+  List<String> _getTrackNames(String albumTitle) {
+    if (albumTitle.toLowerCase().contains('bảo tàng của nuối tiếc')) {
+      return [
+        'Nếu Những Tiếc Nuối',
+        'Mùa Mưa Ấy',
+        'Ngồi Chờ Trong Vấn Vương - feat. Mỹ Anh',
+        'Dành Hết Xuân Thì Để Chờ Nhau - feat. Hà Anh Tuấn',
+        'Những Lời Hứa Bỏ Quên - feat. Dear Jane',
+        'Bình Yên - feat. Binz'
+      ];
+    } else if (albumTitle.toLowerCase().contains('show của đen')) {
+      return [
+        'Mơ (ft. Hậu Vi)',
+        'Ngày Lang Thang',
+        '10 Triệu Năm',
+        'Mười Năm (ft. Ngọc Linh)'
+      ];
+    }
+    return List.generate(10, (index) => 'Track ${index + 1}');
+  }
+
   @override
   void initState() {
     super.initState();
@@ -278,16 +299,18 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
                       ),
                     ],
                   ),
-                  // Play button that navigates to player screen
+                  // Play button that starts playing from track 1
                   FloatingActionButton(
                     backgroundColor: AppColors.spotifyGreen,
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => PlayerScreen(
-                            title: widget.title,
+                        MaterialPageRoute(                          builder: (context) => PlayerScreen(
+                            title: 'Nếu Những Tiếc Nuối',
                             imageAsset: widget.imageAsset,
+                            currentTrack: 1,
+                            totalTracks: widget.title.toLowerCase().contains('bảo tàng của nuối tiếc') ? 6 : 10,
+                            albumTitle: widget.title,
                           ),
                         ),
                       );
@@ -301,45 +324,50 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
           ),
 
           // Songs list
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return ListTile(
-                  leading: Text(
-                    '${index + 1}',
-                    style: AppTextStyles.bodyText.copyWith(
-                      color: AppColors.spotifyLightGrey,
-                    ),
-                  ),
-                  title: Text(
-                    'Track ${index + 1}',
-                    style: AppTextStyles.bodyText,
-                  ),
-                  subtitle: Text(
-                    '${(index % 3 + 2) * 100 + (index % 5) * 11}K plays',
-                    style: AppTextStyles.smallText,
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(
-                      Icons.more_vert,
-                      color: AppColors.spotifyLightGrey,
-                    ),
-                    onPressed: () {},
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PlayerScreen(
-                          title: 'Track ${index + 1} - ${widget.title}',
-                          imageAsset: widget.imageAsset,
-                        ),
+          SliverList(            delegate: SliverChildBuilderDelegate(
+              (context, index) {                // Special handling for albums' tracks
+                final trackNames = _getTrackNames(widget.title);
+                if (index < trackNames.length) {
+                  return ListTile(
+                    leading: Text(
+                      '${index + 1}',
+                      style: AppTextStyles.bodyText.copyWith(
+                        color: AppColors.spotifyLightGrey,
                       ),
-                    );
-                  },
-                );
-              },
-              childCount: 10, // Giả lập 10 bài hát
+                    ),
+                    title: Text(
+                      trackNames[index],
+                      style: AppTextStyles.bodyText,
+                    ),
+                    subtitle: Text(
+                      index == 0 ? '320K plays' : '280K plays',
+                      style: AppTextStyles.smallText,
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(
+                        Icons.more_vert,
+                        color: AppColors.spotifyLightGrey,
+                      ),
+                      onPressed: () {},
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PlayerScreen(
+                            title: 'Track ${index + 1} - ${widget.title}',
+                            imageAsset: widget.imageAsset,
+                            currentTrack: index + 1,
+                            totalTracks: trackNames.length,
+                            albumTitle: widget.title,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+                return null;
+              },              childCount: _getTrackNames(widget.title).length,
             ),
           ),
         ],

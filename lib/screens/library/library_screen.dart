@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import '../../utils/constants.dart';
 import '../../widgets/library/playlist_item.dart';
 import '../../services/auth_service.dart';
-import '../../services/download_service.dart';
-import '../../widgets/home/featured_playlist_item.dart';
+
 import 'downloaded_albums_screen.dart';
 
 // Định nghĩa enum cho các loại mục
@@ -254,9 +253,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
         return _albumItems;
       case LibraryItemType.downloaded:
         return _downloadedItems;
-      default:
-        return _musicItems;
-    }
+      }
   }
 
   @override

@@ -142,7 +142,6 @@ class AuthService {
       );
     }
   }
-
   // Đăng nhập với Google cho web
   Future<Map<String, dynamic>> signInWithGoogleWeb() async {
     try {
@@ -158,17 +157,28 @@ class AuthService {
         'prompt': 'select_account'
       });
       
-      // Sử dụng Popup sign in cho web
-      final userCredential = await _auth.signInWithPopup(googleProvider);
+      // Sử dụng Redirect sign in cho web thay vì popup để tránh lỗi
+      final userCredential = await _auth.signInWithRedirect(googleProvider);
       
-      // Kiểm tra nếu người dùng mới
-      bool isNewUser = userCredential.additionalUserInfo?.isNewUser ?? false;
+      // Lấy thông tin người dùng từ kết quả
+      final user = _auth.currentUser;
+      if (user == null) {
+        throw FirebaseAuthException(
+          code: 'user-not-found',
+          message: 'Không tìm thấy thông tin người dùng sau khi đăng nhập',
+        );
+      }
+      
+      // Kiểm tra nếu người dùng mới - trong trường hợp redirect, không có additionalInfo
+      // Thay vào đó hãy kiểm tra xem user document đã tồn tại chưa
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      bool isNewUser = !userDoc.exists;
       
       // Cập nhật hoặc tạo user document trong Firestore
-      await _firestore.collection('users').doc(userCredential.user!.uid).set({
-        'email': userCredential.user!.email,
-        'displayName': userCredential.user!.displayName,
-        'photoURL': userCredential.user!.photoURL,
+      await _firestore.collection('users').doc(user.uid).set({
+        'email': user.email,
+        'displayName': user.displayName,
+        'photoURL': user.photoURL,
         'lastLogin': Timestamp.now(),
         'createdAt': isNewUser ? Timestamp.now() : FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
@@ -176,10 +186,10 @@ class AuthService {
       // Trả về credential dưới dạng map
       return {
         'user': {
-          'uid': userCredential.user!.uid,
-          'displayName': userCredential.user!.displayName,
-          'email': userCredential.user!.email,
-          'photoURL': userCredential.user!.photoURL,
+          'uid': user.uid,
+          'displayName': user.displayName,
+          'email': user.email,
+          'photoURL': user.photoURL,
         },
         'isNewUser': isNewUser,
       };

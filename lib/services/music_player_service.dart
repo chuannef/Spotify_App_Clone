@@ -159,11 +159,17 @@ class MusicPlayerService with ChangeNotifier {
       print('Error restarting track: $e');
     }
   }
-  
-  Future<void> seekTo(double position) async {
+    Future<void> seekTo(double position) async {
     if (_duration.inMilliseconds > 0) {
-      final newPosition = position * _duration.inMilliseconds;
-      await audioPlayer.seek(Duration(milliseconds: newPosition.round()));
+      try {
+        // Ensure position is between 0.0 and 1.0
+        position = position.clamp(0.0, 1.0);
+        final newPosition = (position * _duration.inMilliseconds).toInt();
+        await audioPlayer.seek(Duration(milliseconds: newPosition));
+        notifyListeners();
+      } catch (e) {
+        print('Error in seekTo: $e');
+      }
     }
   }
   

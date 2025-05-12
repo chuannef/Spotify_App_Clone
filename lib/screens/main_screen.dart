@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../utils/constants.dart';
+import '../widgets/mini_player.dart';
+import '../services/music_player_service.dart';
 import 'home/home_screen.dart';
 import 'search/search_screen.dart';
 import 'library/library_screen.dart';
@@ -19,12 +22,24 @@ class _MainScreenState extends State<MainScreen> {
     const SearchScreen(),
     const LibraryScreen(),
   ];
-  
-  @override
+    @override
   Widget build(BuildContext context) {
+    final musicService = Provider.of<MusicPlayerService>(context);
+    
     return Scaffold(
       backgroundColor: AppColors.spotifyBlack,
-      body: _screens[_currentIndex],
+      body: Column(
+        children: [
+          // Main content
+          Expanded(
+            child: _screens[_currentIndex],
+          ),
+          
+          // Mini player
+          if (musicService.showMiniPlayer)
+            const MiniPlayer(),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: AppColors.spotifyBlack,
         selectedItemColor: AppColors.spotifyWhite,

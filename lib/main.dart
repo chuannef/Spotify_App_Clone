@@ -8,6 +8,7 @@ import 'screens/auth/login_screen.dart';
 import 'screens/main_screen.dart';
 import 'services/auth_service.dart';
 import 'services/favorites_service.dart';
+import 'services/music_player_service.dart';
 import 'utils/constants.dart';
 
 void main() async {
@@ -22,11 +23,13 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
+  Widget build(BuildContext context) {    return MultiProvider(
       providers: [
         ChangeNotifierProvider(
           create: (_) => FavoritesService(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => MusicPlayerService(),
         ),
       ],
       child: MaterialApp(

@@ -5,8 +5,11 @@ library google_accounts_id;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:js/js.dart';
+import 'music_player_service.dart';
 
 @JS()
 external dynamic get googleId;
@@ -105,10 +108,16 @@ class AuthService {
       );
     }
   }
-  
-  // Đăng xuất
-  Future<void> signOut() async {
+    // Đăng xuất
+  Future<void> signOut(BuildContext? context) async {
     try {
+      // Stop music playback if context is provided
+      if (context != null) {
+        final musicService = Provider.of<MusicPlayerService>(context, listen: false);
+        await musicService.stopMusic();
+        musicService.hideMiniPlayer();
+      }
+      
       await _googleSignIn.signOut();
       await _auth.signOut();
     } catch (e) {

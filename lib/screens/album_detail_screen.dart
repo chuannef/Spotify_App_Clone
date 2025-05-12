@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import '../services/favorites_service.dart';
 import '../services/download_service.dart';
+import '../services/music_player_service.dart';
 import '../utils/constants.dart';
 import 'player_screen.dart';
 import 'library/downloaded_albums_screen.dart';
@@ -305,15 +306,28 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
                         onPressed: () {},
                       ),
                     ],
-                  ),
-                  // Play button that starts playing from track 1
+                  ),                  // Play button that starts playing from track 1
                   FloatingActionButton(
                     backgroundColor: AppColors.spotifyGreen,
                     onPressed: () {
+                      // Get the music service
+                      final musicService = Provider.of<MusicPlayerService>(context, listen: false);
+                      
+                      // Play the first track
+                      musicService.playTrack(CurrentTrack(
+                        title: _getTrackNames(widget.title).first,
+                        albumTitle: widget.title,
+                        imageAsset: widget.imageAsset,
+                        trackNumber: 1,
+                        totalTracks: _getTrackNames(widget.title).length,
+                      ));
+                      
+                      // Navigate to the player screen
                       Navigator.push(
                         context,
-                        MaterialPageRoute(                          builder: (context) => PlayerScreen(
-                            title: 'Nếu Những Tiếc Nuối',
+                        MaterialPageRoute(
+                          builder: (context) => PlayerScreen(
+                            title: _getTrackNames(widget.title).first,
                             imageAsset: widget.imageAsset,
                             currentTrack: 1,
                             totalTracks: _getTrackNames(widget.title).length,
@@ -356,13 +370,25 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
                         color: AppColors.spotifyLightGrey,
                       ),
                       onPressed: () {},
-                    ),
-                    onTap: () {
+                    ),                    onTap: () {
+                      // Get the music service
+                      final musicService = Provider.of<MusicPlayerService>(context, listen: false);
+                      
+                      // Play the selected track
+                      musicService.playTrack(CurrentTrack(
+                        title: trackNames[index],
+                        albumTitle: widget.title,
+                        imageAsset: widget.imageAsset,
+                        trackNumber: index + 1,
+                        totalTracks: trackNames.length,
+                      ));
+                      
+                      // Navigate to player screen
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => PlayerScreen(
-                            title: 'Track ${index + 1} - ${widget.title}',
+                            title: trackNames[index],
                             imageAsset: widget.imageAsset,
                             currentTrack: index + 1,
                             totalTracks: trackNames.length,

@@ -101,11 +101,10 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 title: const Text(
                   'Đăng xuất',
                   style: TextStyle(color: AppColors.spotifyWhite),
-                ),
-                onTap: () async {
+                ),                onTap: () async {
                   try {
                     Navigator.of(context).pop();
-                    await _authService.signOut();
+                    await _authService.signOut(context);
                     // Việc điều hướng về màn hình đăng nhập sẽ được xử lý bởi AuthWrapper trong main.dart
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(

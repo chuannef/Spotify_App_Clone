@@ -44,6 +44,13 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
         'Ngày Lang Thang',
         '10 Triệu Năm',
         'Mười Năm (ft. Ngọc Linh)'
+      ];    } else if (albumTitle.toLowerCase().contains('lặng')) {
+      return [
+        '1000 Ánh Mắt (ft. Obito)',
+        'Anh Vẫn Đợi',
+        'Có Đôi Điều',
+        'Lặng',
+        'Night Time'
       ];
     }
     return List.generate(10, (index) => 'Track ${index + 1}');
@@ -309,7 +316,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
                             title: 'Nếu Những Tiếc Nuối',
                             imageAsset: widget.imageAsset,
                             currentTrack: 1,
-                            totalTracks: widget.title.toLowerCase().contains('bảo tàng của nuối tiếc') ? 6 : 10,
+                            totalTracks: _getTrackNames(widget.title).length,
                             albumTitle: widget.title,
                           ),
                         ),

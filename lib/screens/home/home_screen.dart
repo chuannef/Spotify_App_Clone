@@ -109,7 +109,22 @@ class HomeScreen extends StatelessWidget {
                     id: 'album_show_cua_den',
                     title: 'Show của Đen',
                     description: 'Liveshow "Show của Đen" tại Nhà thi đấu',
-                    imageAsset: 'assets/images/den.png',
+                    imageAsset: 'assets/images/album/den.png',
+                  ),
+                  
+                  SizedBox(width: 16),
+                  FeaturedPlaylistItem(
+                    id: 'album_bao_tang',
+                    title: 'Bảo Tàng Của Nuối Tiếc',
+                    description: 'All of Vũ',
+                    imageAsset: 'assets/images/tn.png',
+                  ),
+                   SizedBox(width: 16),
+                  FeaturedPlaylistItem(
+                    id: 'album_Lặng',
+                    title: 'Lặng',
+                    description: 'Shiki (@shikidaspirit) is a Vietnamese artist and producer, based in Ho Chi Minh City',
+                    imageAsset: 'assets/images/album/lang.png',
                   ),
                   SizedBox(width: 16),
                   FeaturedPlaylistItem(
@@ -117,13 +132,6 @@ class HomeScreen extends StatelessWidget {
                     title: 'Jumping machine',
                     description: 'New music from artists you follow',
                     imageAsset: 'assets/images/JP.png',
-                  ),
-                  SizedBox(width: 16),
-                  FeaturedPlaylistItem(
-                    id: 'album_bao_tang',
-                    title: 'Bảo Tàng Của Nuối Tiếc',
-                    description: 'New music from artists you follow',
-                    imageAsset: 'assets/images/tn.png',
                   ),
                   SizedBox(width: 16),
                   FeaturedPlaylistItem(

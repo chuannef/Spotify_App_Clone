@@ -103,25 +103,27 @@ class FeaturedPlaylistItem extends StatelessWidget {
                       ),
                       iconSize: 24,
                       padding: const EdgeInsets.all(4),
-                      constraints: const BoxConstraints(),                      onPressed: () {
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
                         // Get total tracks based on album title
-                        int totalTracksCount;
+                        int totalTracks;
                         if (title.toLowerCase().contains('bảo tàng của nuối tiếc')) {
-                          totalTracksCount = 6;
+                          totalTracks = 6;
                         } else if (title.toLowerCase().contains('lặng')) {
-                          totalTracksCount = 5;
+                          totalTracks = 5;
                         } else if (title.toLowerCase().contains('show của đen')) {
-                          totalTracksCount = 4;
+                          totalTracks = 4;
                         } else {
-                          totalTracksCount = 10; // Default for other albums
+                          totalTracks = 10; // Default for other albums
                         }
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => PlayerScreen(                              title: title,
+                            builder: (context) => PlayerScreen(
+                              title: title,
                               imageAsset: imageAsset,
                               currentTrack: 1, // Start with first track
-                              totalTracks: totalTracksCount,
+                              totalTracks: totalTracks,
                               albumTitle: title,
                             ),
                           ),

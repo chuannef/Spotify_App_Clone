@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:audioplayers/audioplayers.dart';
 import '../utils/constants.dart';
 
@@ -122,60 +121,26 @@ class _PlayerScreenState extends State<PlayerScreen> with SingleTickerProviderSt
         ];
         audioPath = 'assets/sound/Show của Đen/${trackFiles[widget.currentTrack! - 1]}';
       } else if (widget.albumTitle.toLowerCase().contains('lặng')) {
-        final trackFiles = [
-          '1000 Ánh Mắt (ft. Obito).mp3',
-          'Anh Vẫn Đợi.mp3',
-          'Có Đôi Điều .mp3', 
-          'Lặng.mp3',
-          'Night Time.mp3'
-        ];
-        int index = (widget.currentTrack! - 1) % trackFiles.length;
-        audioPath = 'assets/sound/Lặng/${trackFiles[index]}';
-        print('Lặng album detected. Track index: $index, Selected file: ${trackFiles[index]}');
+        audioPath = 'assets/sound/Lặng/Lặng_${widget.currentTrack}.mp3';
       } else if (widget.title.toLowerCase().contains('jumping machine')) {
         audioPath = 'assets/sound/Jumping machine.mp3';
       }
       print('Loading audio file: $audioPath'); // Debug print
       
       if (mounted) {
-        try {
-          // For web, we need to handle audio playback differently
-          if (kIsWeb) {
-            // For web, try to use a different approach
-            print('Running on web platform');
-            final webPath = audioPath.replaceFirst('assets/', '');
-            print('Web audio path: $webPath');
-            
-            await audioPlayer.setSource(AssetSource(webPath));
-            print('Audio source set successfully with AssetSource');
-          } else {
-            // For mobile platforms
-            await audioPlayer.setSource(AssetSource(audioPath.replaceFirst('assets/', '')));
-            print('Audio source set for mobile');
-          }
-          
-          await audioPlayer.resume();
-          setState(() {
-            _isPlaying = true;
-          });
-          _controller.repeat();
-          print('Audio playback started successfully');
-        } catch (audioError) {
-          print('Error playing audio: $audioError');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error playing track: $audioError'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
+        await audioPlayer.setSource(AssetSource(audioPath.replaceFirst('assets/', '')));
+        await audioPlayer.resume();
+        setState(() {
+          _isPlaying = true;
+        });
+        _controller.repeat();
       }
     } catch (e) {
-      print('Error in audio loading: $e');
+      print('Error loading audio: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error loading track: $e'),
+            content: Text('Error playing track: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -204,11 +169,13 @@ class _PlayerScreenState extends State<PlayerScreen> with SingleTickerProviderSt
       return trackNumber > 0 && trackNumber <= trackNames.length ? trackNames[trackNumber - 1] : 'Unknown Track';
     } else if (widget.albumTitle.toLowerCase().contains('lặng')) {
       final trackNames = [
-        '1000 Ánh Mắt (ft. Obito)',
-        'Anh Vẫn Đợi',
-        'Có Đôi Điều',
+        'Trên Lầu Cao',
         'Lặng',
-        'Night Time'
+        'Lời Không Nói',
+        'Giận Vội',
+        'Xa',
+        'Em Sẽ Đi',
+        'Anh Sẽ Đợi'
       ];
       return trackNumber > 0 && trackNumber <= trackNames.length ? trackNames[trackNumber - 1] : 'Unknown Track';
     }

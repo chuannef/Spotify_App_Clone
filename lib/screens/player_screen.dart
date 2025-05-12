@@ -251,6 +251,29 @@ class _PlayerScreenState extends State<PlayerScreen> with SingleTickerProviderSt
     }
   }
 
+  // Method to restart the current track from the beginning
+  void _restartTrack() async {
+    try {
+      await audioPlayer.seek(const Duration(seconds: 0));
+      if (!_isPlaying) {
+        await audioPlayer.resume();
+        setState(() {
+          _isPlaying = true;
+          _controller.repeat();
+        });
+      }
+     
+    } catch (e) {
+      print('Error restarting track: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error restarting track: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   void dispose() {
     _playerStateSubscription?.cancel();
@@ -476,13 +499,12 @@ class _PlayerScreenState extends State<PlayerScreen> with SingleTickerProviderSt
                                       widget.currentTrack! < widget.totalTracks! 
                                 ? _playNextTrack 
                                 : null,
-                          ),
-                          IconButton(
+                          ),                          IconButton(
                             icon: const Icon(
                               Icons.repeat,
-                              color: AppColors.spotifyLightGrey,
+                              color: AppColors.spotifyGreen,
                             ),
-                            onPressed: () {},
+                            onPressed: _restartTrack,
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
                           ),

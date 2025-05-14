@@ -25,8 +25,8 @@ class HomeScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Good evening',
-                    style: AppTextStyles.heading.copyWith(fontSize: 24),
+                    'Nghe gì hôm này?',
+                    style: AppTextStyles.heading.copyWith(fontSize: 18),
                   ),
                   Row(
                     children: [

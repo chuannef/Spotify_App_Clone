@@ -1,28 +1,18 @@
-// JS interop annotations cho Google Identity Services API
-@JS('google.accounts.id')
-library google_accounts_id;
-
+// AuthService class - Firebase Authentication Service
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
-import 'package:js/js.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'music_player_service.dart';
-
-@JS()
-external dynamic get googleId;
-
-@JS('google.accounts.oauth2.initTokenClient')
-external dynamic initTokenClient(dynamic config);
 
 class AuthService {
   // Instances Firebase
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  
-  // Instance Google Sign-in
+    // Instance Google Sign-in với cấu hình nâng cao
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: [
       'email',
@@ -30,6 +20,8 @@ class AuthService {
       'https://www.googleapis.com/auth/userinfo.email',
       'https://www.googleapis.com/auth/userinfo.profile',
     ],
+    // Thêm clientId cho Web để đảm bảo đăng nhập trên nền tảng web
+    clientId: '157680094456-qqeklm5vd0fmcltqr6qlebbkqpu318tf.apps.googleusercontent.com',
   );
 
   // Getter cho user hiện tại
@@ -57,9 +49,8 @@ class AuthService {
       throw e;
     }
   }
-
   // Đăng nhập với Google cho thiết bị di động và desktop
-  Future<UserCredential> signInWithGoogle() async {
+  Future<Map<String, dynamic>> signInWithGoogle() async {
     try {
       // Bắt đầu quy trình đăng nhập tương tác
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -84,20 +75,31 @@ class AuthService {
       // Đăng nhập vào Firebase với credential
       final UserCredential userCredential = await _auth.signInWithCredential(credential);
       
+      // Kiểm tra xem người dùng đã tồn tại chưa để xác định isNewUser
+      final userDoc = await _firestore.collection('users').doc(userCredential.user!.uid).get();
+      bool isNewUser = !userDoc.exists || userCredential.additionalUserInfo?.isNewUser == true;
+      
       // Cập nhật hoặc tạo user document trong Firestore
       await _firestore.collection('users').doc(userCredential.user!.uid).set({
         'email': userCredential.user!.email,
         'displayName': userCredential.user!.displayName,
         'photoURL': userCredential.user!.photoURL,
         'lastLogin': Timestamp.now(),
-        'createdAt': userCredential.additionalUserInfo!.isNewUser 
-            ? Timestamp.now() 
-            : FieldValue.serverTimestamp(),
+        'createdAt': isNewUser ? Timestamp.now() : FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
       
-      return userCredential;
+      // Trả về dạng map cho nhất quán với signInWithGoogleWeb
+      return {
+        'user': {
+          'uid': userCredential.user!.uid,
+          'displayName': userCredential.user!.displayName,
+          'email': userCredential.user!.email,
+          'photoURL': userCredential.user!.photoURL,
+        },
+        'isNewUser': isNewUser,
+      };
     } on FirebaseAuthException catch (e) {
-      // Xử lý và chuyển tiếp lỗi Firebase
+      print('Firebase Auth Error: ${e.code} - ${e.message}');
       throw e;
     } catch (e) {
       // Xử lý các lỗi khác
@@ -141,8 +143,7 @@ class AuthService {
         message: 'Không thể kiểm tra email: $e',
       );
     }
-  }
-  // Đăng nhập với Google cho web
+  }  // Đăng nhập với Google cho web
   Future<Map<String, dynamic>> signInWithGoogleWeb() async {
     try {
       // Tạo một Google Auth Provider
@@ -157,11 +158,11 @@ class AuthService {
         'prompt': 'select_account'
       });
       
-      // Sử dụng Redirect sign in cho web thay vì popup để tránh lỗi
-      final userCredential = await _auth.signInWithRedirect(googleProvider);
+      // Sử dụng Popup sign-in cho web thay vì redirect
+      final UserCredential userCredential = await _auth.signInWithPopup(googleProvider);
       
       // Lấy thông tin người dùng từ kết quả
-      final user = _auth.currentUser;
+      final user = userCredential.user;
       if (user == null) {
         throw FirebaseAuthException(
           code: 'user-not-found',

@@ -25,38 +25,48 @@ class GoogleSignInButton extends StatefulWidget {
 class _GoogleSignInButtonState extends State<GoogleSignInButton> {
   final AuthService _authService = AuthService();
   bool _isLoading = false;
-
   Future<void> _handleSignIn() async {
     setState(() => _isLoading = true);
     widget.onLoading(true);
 
     try {
-      final result = kIsWeb
+      // Cả hai phương thức đều trả về Map<String, dynamic> giờ đây
+      final Map<String, dynamic> result = kIsWeb
           ? await _authService.signInWithGoogleWeb()
           : await _authService.signInWithGoogle();
       
-      // Handle the result based on its type
-      if (result is Map<String, dynamic>) {
-        // If result is already a Map, pass it directly
-        widget.onSuccess(result);
-      } else if (result is UserCredential) {
-        // If result is a UserCredential, extract the needed data
-        final Map<String, dynamic> userMap = {
-          'user': {
-            'uid': result.user?.uid,
-            'displayName': result.user?.displayName,
-            'email': result.user?.email,
-            'photoURL': result.user?.photoURL,
-          },
-          'isNewUser': result.additionalUserInfo?.isNewUser,
-        };
-        widget.onSuccess(userMap);
-      } else {
-        // Handle other potential return types
-        widget.onError('Unexpected sign in result type: ${result.runtimeType}');
+      // Kết quả đã được chuẩn hóa, truyền trực tiếp
+      widget.onSuccess(result);    } catch (error) {
+      print('Google Sign In Error: $error');
+      
+      String errorMessage = 'Đăng nhập Google thất bại';
+      
+      if (error is FirebaseAuthException) {
+        switch (error.code) {
+          case 'popup-blocked':
+            errorMessage = 'Cửa sổ đăng nhập bị chặn. Vui lòng cho phép pop-up và thử lại';
+            break;
+          case 'popup-closed-by-user':
+            errorMessage = 'Quá trình đăng nhập bị ngắt bởi người dùng';
+            break;
+          case 'network-request-failed':
+            errorMessage = 'Lỗi kết nối mạng. Vui lòng kiểm tra kết nối internet';
+            break;
+          case 'unauthorized-domain':
+            errorMessage = 'Tên miền hiện tại không được xác thực. Vui lòng liên hệ quản trị viên';
+            break;
+          case 'user-cancelled':
+            errorMessage = 'Đăng nhập đã bị hủy bởi người dùng';
+            break;
+          case 'api-not-enabled':
+            errorMessage = 'API Google không được kích hoạt hoặc chưa được cấu hình đúng';
+            break;
+          default:
+            errorMessage = 'Lỗi đăng nhập: ${error.code} - ${error.message}';
+        }
       }
-    } catch (error) {
-      widget.onError(error);
+      
+      widget.onError(errorMessage);
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);

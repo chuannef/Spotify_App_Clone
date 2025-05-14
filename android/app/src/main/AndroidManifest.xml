@@ -2,8 +2,7 @@
     <!-- Thêm quyền internet cho Google Sign-In -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    
-    <application
+      <application
         android:label="app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
@@ -39,11 +38,13 @@
          https://developer.android.com/training/package-visibility and
          https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
 
-         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
-    <queries>
+         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->    <queries>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        
+        <!-- Thêm cấu hình cho Google Sign-In -->
+        <package android:name="com.google.android.gms" />
     </queries>
 </manifest>

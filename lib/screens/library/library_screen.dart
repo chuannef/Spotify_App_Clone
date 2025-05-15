@@ -273,7 +273,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     radius: 16,
                     backgroundColor: Colors.orange,
                     child: Text(
-                      'U',
+                      'CN',
                       style: AppTextStyles.bodyText.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -282,7 +282,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Your Library',
+                  'Thư viện của bạn',
                   style: AppTextStyles.heading.copyWith(fontSize: 22),
                 ),
               ],
@@ -308,6 +308,29 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
+                    FilterChip(
+                      label: const Text('Albums'),
+                      selected: _currentType == LibraryItemType.album,
+                      onSelected: (selected) {
+                        if (selected) {
+                          _handleTabChange(LibraryItemType.album);
+                        }
+                      },
+                      backgroundColor: Colors.white.withOpacity(0.1),
+                      selectedColor: AppColors.spotifyWhite,
+                      labelStyle: TextStyle(
+                        color: _currentType == LibraryItemType.album
+                            ? AppColors.spotifyBlack
+                            : AppColors.spotifyWhite,
+                        fontWeight: _currentType == LibraryItemType.album
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
                     FilterChip(
                       label: const Text('Nhạc'),
                       selected: _currentType == LibraryItemType.music,
@@ -354,29 +377,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    FilterChip(
-                      label: const Text('Albums'),
-                      selected: _currentType == LibraryItemType.album,
-                      onSelected: (selected) {
-                        if (selected) {
-                          _handleTabChange(LibraryItemType.album);
-                        }
-                      },
-                      backgroundColor: Colors.white.withOpacity(0.1),
-                      selectedColor: AppColors.spotifyWhite,
-                      labelStyle: TextStyle(
-                        color: _currentType == LibraryItemType.album
-                            ? AppColors.spotifyBlack
-                            : AppColors.spotifyWhite,
-                        fontWeight: _currentType == LibraryItemType.album
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
+                    
                     FilterChip(
                       label: const Text('Tải Xuống'),
                       selected: _currentType == LibraryItemType.downloaded,

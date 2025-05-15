@@ -64,6 +64,12 @@ class HomeScreen extends StatelessWidget {
                   ),
                   SizedBox(width: 16),
                   RecentlyPlayedItem(
+                    title: 'Với Da LAB, Rhymastic, JustaTee và nhiều hơn nữa', 
+                    imageAsset: 'assets/images/main/sobin.png',
+                    isPlaylist: true,
+                  ),
+                  SizedBox(width: 16),
+                  RecentlyPlayedItem(
                     title: 'Với HIEUTHUHAI, Ronboogz, MANBO và nhiều hơn nữa', 
                     imageAsset: 'assets/images/bray.png',
                     isPlaylist: true,

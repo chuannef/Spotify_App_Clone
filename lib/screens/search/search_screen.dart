@@ -202,7 +202,7 @@ class SearchScreen extends StatelessWidget {
                         const Icon(Icons.search, color: AppColors.spotifyBlack),
                         const SizedBox(width: 12),
                         Text(
-                          'What do you want to listen to?',
+                          'Bạn muốn nghe nhạc gì nào?',
                           style: AppTextStyles.bodyText.copyWith(
                             color: AppColors.spotifyBlack,
                           ),
@@ -223,7 +223,7 @@ class SearchScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Browse All',
+                    'Duyệt tất cả thể loại',
                     style: AppTextStyles.subHeading.copyWith(fontSize: 20),
                   ),
                   const SizedBox(height: 16),

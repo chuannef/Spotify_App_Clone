@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../../utils/constants.dart';
 import '../../widgets/library/playlist_item.dart';
 import '../../services/auth_service.dart';
+import '../../services/favorites_service.dart'; // Import FavoritesService
+import '../../models/album_model.dart'; // Import Album model
+import 'package:provider/provider.dart'; // Import Provider
 
 import 'downloaded_albums_screen.dart';
 
@@ -22,12 +25,70 @@ class LibraryScreen extends StatefulWidget {
 
 class _LibraryScreenState extends State<LibraryScreen> {
   final AuthService _authService = AuthService();
-  LibraryItemType _currentType = LibraryItemType.music;
-  
+  LibraryItemType _currentType = LibraryItemType.album; // Changed default to album
+  late FavoritesService _favoritesService; // Declare FavoritesService instance
+  List<Album> _allAlbums = []; // Placeholder for all albums - REPLACE WITH ACTUAL DATA SOURCE
+  List<Map<String, String>> _favoriteAlbumItems = []; // List to hold favorite album data for UI
+
   @override
   void initState() {
     super.initState();
-    // Add any initialization if needed
+    _favoritesService = Provider.of<FavoritesService>(context, listen: false);
+    _loadAllAlbums(); // Load all albums
+    _favoritesService.addListener(_updateFavoriteAlbums); // Listen for changes in favorites
+    _updateFavoriteAlbums(); // Initial load of favorite albums
+  }
+
+  @override
+  void dispose() {
+    _favoritesService.removeListener(_updateFavoriteAlbums); // Clean up listener
+    super.dispose();
+  }
+
+  // Method to simulate loading all albums (replace with actual data fetching)
+  void _loadAllAlbums() {
+    // This is a placeholder. You should fetch your actual album data here.
+    // For example, if you have a list of all albums defined somewhere:
+    // _allAlbums = allAlbumsGlobalList; 
+    // Or fetch from a service:
+    // _allAlbums = await AlbumService.getAllAlbums();
+
+    // For demonstration, using the existing _albumItemsStatic as the source of all albums
+    // You'll need to adapt this to your actual Album model structure.
+    _allAlbums = _albumItemsStatic.map((item) {
+      // Assuming your Album model has a constructor that takes id, title, description, imageAsset
+      // And that your _albumItemsStatic matches this structure.
+      // You might need to adjust this mapping based on your actual Album model.
+      return Album(
+        id: item['id']!,
+        name: item['title']!,
+        description: item['description']!,
+        imageUrl: item['imageAsset']!,
+        songs: [], // Assuming songs list might be empty or populated elsewhere
+      );
+    }).toList();
+  }
+
+  void _updateFavoriteAlbums() {
+    if (!_favoritesService.isLoaded) {
+      debugPrint("[LibraryScreen] Favorites not loaded yet.");
+      return;
+    }
+    final favoriteIds = _favoritesService.favoriteAlbumIds;
+    debugPrint("[LibraryScreen] Favorite Album IDs from Service: $favoriteIds");
+    debugPrint("[LibraryScreen] All Album IDs in _allAlbums: ${_allAlbums.map((a) => a.id).toList()}");
+
+    final favoriteAlbums = _allAlbums.where((album) => favoriteIds.contains(album.id)).toList();
+    debugPrint("[LibraryScreen] Filtered Favorite Albums to display: ${favoriteAlbums.map((a) => a.id).toList()}");
+
+    setState(() {
+      _favoriteAlbumItems = favoriteAlbums.map((album) => {
+        'id': album.id,
+        'title': album.name,
+        'description': album.description,
+        'imageAsset': album.imageUrl,
+      }).toList();
+    });
   }
 
   // Handle tab changes, directly navigate to downloaded albums when download tab is selected
@@ -204,12 +265,14 @@ class _LibraryScreenState extends State<LibraryScreen> {
   ];
 
   // Dữ liệu mẫu cho các album - đồng bộ từ Album và đĩa nổi tiếng
-  final List<Map<String, String>> _albumItems = [
+  // This list will now be populated by _favoriteAlbumItems when the album tab is active
+  // However, we need a source for _allAlbums. Let's keep the static list for that purpose
+  static final List<Map<String, String>> _albumItemsStatic = [
     {
-      'id': 'album_rosie',
-      'title': 'Rosie',
-      'description': 'Album • Coldplay, Maroon 5, Imagine Dragons',
-      'imageAsset': 'assets/images/rosie.png',
+      'id': 'album_show_cua_den',
+      'title': 'Show của Đen',
+      'description': 'Album • Đen Vâu',
+      'imageAsset': 'assets/images/den.png', 
     },
     {
       'id': 'album_discover_weekly',
@@ -229,6 +292,13 @@ class _LibraryScreenState extends State<LibraryScreen> {
       'description': 'Album • New music from artists you follow',
       'imageAsset': 'assets/images/tn.png',
     },
+    {
+      'id': 'album_Lặng',
+      'title': 'Lặng',
+      'description': 'Shiki (@shikidaspirit) is a Vietnamese artist and producer, based in Ho Chi Minh City',
+      'imageAsset': 'assets/images/album/lang.png',
+    },
+    // Add other albums here that can be favorited
   ];
 
   // Danh sách dummy cho các mục đã tải xuống
@@ -249,10 +319,10 @@ class _LibraryScreenState extends State<LibraryScreen> {
       case LibraryItemType.artist:
         return _artistItems;
       case LibraryItemType.album:
-        return _albumItems;
+        return _favoriteAlbumItems; // Return favorite albums when album tab is selected
       case LibraryItemType.downloaded:
         return _downloadedItems;
-      }
+    }
   }
 
   @override
@@ -497,6 +567,21 @@ class _LibraryScreenState extends State<LibraryScreen> {
   // Widget hiển thị danh sách thông thường (nhạc, albums, tải xuống)
   Widget _buildRegularList() {
     final items = _getCurrentItems();
+    if (_currentType == LibraryItemType.album && !_favoritesService.isLoaded) {
+      return SliverFillRemaining(
+        child: Center(child: CircularProgressIndicator(color: AppColors.spotifyGreen)),
+      );
+    }
+    if (_currentType == LibraryItemType.album && items.isEmpty && _favoritesService.isLoaded) {
+      return SliverFillRemaining(
+        child: Center(
+          child: Text(
+            'Bạn chưa có album yêu thích nào.',
+            style: AppTextStyles.bodyText.copyWith(color: AppColors.spotifyGrey),
+          ),
+        ),
+      );
+    }
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {

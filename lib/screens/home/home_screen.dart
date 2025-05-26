@@ -132,6 +132,13 @@ class HomeScreen extends StatelessWidget {
                     description: 'Shiki (@shikidaspirit) is a Vietnamese artist and producer, based in Ho Chi Minh City',
                     imageAsset: 'assets/images/album/lang.png',
                   ),
+                   SizedBox(width: 16),
+                  FeaturedPlaylistItem(
+                    id: 'album_phep_mau', // Changed for ID consistency
+                    title: 'Phép Màu',
+                    description: 'Phép Màu (Đàn Cá Gỗ Original Soundtrack)',
+                    imageAsset: 'assets/images/album/pe.png',
+                  ),
                   SizedBox(width: 16),
                   FeaturedPlaylistItem(
                     id: 'album_jumping_machine',

@@ -25,7 +25,7 @@ class LibraryScreen extends StatefulWidget {
 
 class _LibraryScreenState extends State<LibraryScreen> {
   final AuthService _authService = AuthService();
-  LibraryItemType _currentType = LibraryItemType.album; // Changed default to album
+  LibraryItemType _currentType = LibraryItemType.album; // Default to Album tab
   late FavoritesService _favoritesService; // Declare FavoritesService instance
   List<Album> _allAlbums = []; // Placeholder for all albums - REPLACE WITH ACTUAL DATA SOURCE
   List<Map<String, String>> _favoriteAlbumItems = []; // List to hold favorite album data for UI
@@ -56,9 +56,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
     // For demonstration, using the existing _albumItemsStatic as the source of all albums
     // You'll need to adapt this to your actual Album model structure.
     _allAlbums = _albumItemsStatic.map((item) {
-      // Assuming your Album model has a constructor that takes id, title, description, imageAsset
-      // And that your _albumItemsStatic matches this structure.
-      // You might need to adjust this mapping based on your actual Album model.
       return Album(
         id: item['id']!,
         name: item['title']!,
@@ -301,16 +298,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
     // Add other albums here that can be favorited
   ];
 
-  // Danh sách dummy cho các mục đã tải xuống
-  final List<Map<String, String>> _downloadedItems = [
-    {
-      'id': 'downloads_folder',
-      'title': 'Nhạc đã tải',
-      'description': 'Playlist • Offline',
-      'imageAsset': 'assets/icons/f.png',
-    },
-  ];
-
   // Hàm lấy danh sách dựa trên loại
   List<Map<String, String>> _getCurrentItems() {
     switch (_currentType) {
@@ -321,7 +308,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
       case LibraryItemType.album:
         return _favoriteAlbumItems; // Return favorite albums when album tab is selected
       case LibraryItemType.downloaded:
-        return _downloadedItems;
+        return []; // Return empty list as navigation is handled directly
     }
   }
 
@@ -582,43 +569,21 @@ class _LibraryScreenState extends State<LibraryScreen> {
         ),
       );
     }
+    // If current type is downloaded and items are empty (due to direct navigation),
+    // this will correctly build an empty list.
+    if (_currentType == LibraryItemType.downloaded && items.isEmpty) {
+        // Nothing to display here as navigation to DownloadedAlbumsScreen is direct.
+        // The SliverList below will handle items.length == 0 correctly.
+    }
+
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           final item = items[index];
           
-          // Special handling for downloads folder - navigate to downloads screen
-          if (item['id'] == 'downloads_folder') {
-            return ListTile(
-              leading: ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: Image.asset(
-                  item['imageAsset']!,
-                  width: 65,
-                  height: 65,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              title: Text(
-                item['title']!,
-                style: AppTextStyles.bodyText.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              subtitle: Text(
-                item['description']!,
-                style: AppTextStyles.smallText,
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const DownloadedAlbumsScreen(),
-                  ),
-                );
-              },
-            );
-          }
+          // The special handling for 'downloads_folder' is removed
+          // as _getCurrentItems() returns an empty list for LibraryItemType.downloaded,
+          // and navigation is handled by _handleTabChange.
           
           // Regular playlist items
           return PlaylistItem(

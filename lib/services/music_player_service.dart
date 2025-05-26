@@ -110,6 +110,9 @@ class MusicPlayerService with ChangeNotifier {
           'Đen-Mười-Năm-ft.-Ngọc-Linh-_M_V_-_Lộn-Xộn-3_.mp3'
         ];
         audioPath = 'assets/sound/Show của Đen/${trackFiles[track.trackNumber! - 1]}';
+      } else if (track.albumTitle.toLowerCase().contains('phép màu')) {
+        // Added specific handling for Phép Màu album
+        audioPath = 'assets/sound/phepmau.mp3';
       } else if (track.albumTitle.toLowerCase().contains('lặng')) {
         final trackFiles = [
           '1000 Ánh Mắt (ft. Obito).mp3',
@@ -120,7 +123,8 @@ class MusicPlayerService with ChangeNotifier {
         ];
         int index = (track.trackNumber! - 1) % trackFiles.length;
         audioPath = 'assets/sound/Lặng/${trackFiles[index]}';
-      } else if (track.title.toLowerCase().contains('jumping machine')) {
+      } else if (track.title.toLowerCase().contains('jumping machine') || 
+                 track.albumTitle.toLowerCase().contains('jumping machine')) {
         audioPath = 'assets/sound/Jumping machine.mp3';
       }
       

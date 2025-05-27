@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/music_player_service.dart';
 import '../utils/constants.dart';
+import '../widgets/app_image.dart';
 
 class PlayerScreen extends StatefulWidget {
   final String title;
@@ -86,14 +87,22 @@ class _PlayerScreenState extends State<PlayerScreen> with SingleTickerProviderSt
         '10 Triệu Năm',
         'Mười Năm (ft. Ngọc Linh)'
       ];
-      return trackNumber > 0 && trackNumber <= trackNames.length ? trackNames[trackNumber - 1] : 'Unknown Track';
-    } else if (widget.albumTitle.toLowerCase().contains('lặng')) {
+      return trackNumber > 0 && trackNumber <= trackNames.length ? trackNames[trackNumber - 1] : 'Unknown Track';    } else if (widget.albumTitle.toLowerCase().contains('lặng')) {
       final trackNames = [
         '1000 Ánh Mắt (ft. Obito)',
         'Anh Vẫn Đợi',
         'Có Đôi Điều',
         'Lặng',
         'Night Time'
+      ];
+      return trackNumber > 0 && trackNumber <= trackNames.length ? trackNames[trackNumber - 1] : 'Unknown Track';    } else if (widget.albumTitle.toLowerCase().contains('phép màu') || widget.albumTitle == 'Phép Màu') {
+      final trackNames = [
+        'Phép Màu (Đàn Cá Gỗ OST)'
+      ];
+      return trackNumber > 0 && trackNumber <= trackNames.length ? trackNames[trackNumber - 1] : 'Unknown Track';
+    } else if (widget.albumTitle.toLowerCase().contains('jumping machine')) {
+      final trackNames = [
+        'Jumping Machine'
       ];
       return trackNumber > 0 && trackNumber <= trackNames.length ? trackNames[trackNumber - 1] : 'Unknown Track';
     }
@@ -244,24 +253,13 @@ class _PlayerScreenState extends State<PlayerScreen> with SingleTickerProviderSt
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             color: AppColors.spotifyGrey,
-                          ),
-                          child: ClipRRect(
+                          ),                          child: ClipRRect(
                             borderRadius: BorderRadius.circular(maxDiscSize),
-                            child: Image.asset(
-                              widget.imageAsset,
+                            child: AppImage(
+                              imageAsset: widget.imageAsset,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  color: AppColors.spotifyGrey,
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.music_note,
-                                      size: 80,
-                                      color: AppColors.spotifyWhite,
-                                    ),
-                                  ),
-                                );
-                              },
+                              width: maxDiscSize,
+                              height: maxDiscSize,
                             ),
                           ),
                         ),

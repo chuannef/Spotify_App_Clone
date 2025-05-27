@@ -295,6 +295,11 @@ class _LibraryScreenState extends State<LibraryScreen> {
       'description': 'Shiki (@shikidaspirit) is a Vietnamese artist and producer, based in Ho Chi Minh City',
       'imageAsset': 'assets/images/album/lang.png',
     },
+    {
+      'id': 'album_phep_mau',
+      'title': 'Phép Màu',
+      'description': 'Phép Màu (Đàn Cá Gỗ Original Soundtrack)',      'imageAsset': 'assets/images/album/pe.png',
+    },
     // Add other albums here that can be favorited
   ];
 

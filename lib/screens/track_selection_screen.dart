@@ -1,68 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
+import '../utils/constants.dart';
+import '../services/music_player_service.dart';
 import '../services/favorites_service.dart';
 import '../services/download_service.dart';
-import '../services/music_player_service.dart';
-import '../utils/constants.dart';
 import '../widgets/app_image.dart';
 import 'player_screen.dart';
 import 'library/downloaded_albums_screen.dart';
 
-class AlbumDetailScreen extends StatefulWidget {
-  final String id; // Added album ID parameter
-  final String title;
-  final String description;
+class TrackSelectionScreen extends StatefulWidget {
+  final String albumId;
+  final String albumTitle;
+  final String albumDescription;
   final String imageAsset;
 
-  const AlbumDetailScreen({
-    super.key,
-    required this.id,
-    required this.title,
-    required this.description,
+  const TrackSelectionScreen({
+    Key? key,
+    required this.albumId,
+    required this.albumTitle,
+    required this.albumDescription,
     required this.imageAsset,
-  });
+  }) : super(key: key);
 
   @override
-  State<AlbumDetailScreen> createState() => _AlbumDetailScreenState();
+  State<TrackSelectionScreen> createState() => _TrackSelectionScreenState();
 }
 
-class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
+class _TrackSelectionScreenState extends State<TrackSelectionScreen> {
   bool _isDownloaded = false;
-
-  List<String> _getTrackNames(String albumTitle) {
-    if (albumTitle.toLowerCase().contains('bảo tàng của nuối tiếc')) {
-      return [
-        'Nếu Những Tiếc Nuối',
-        'Mùa Mưa Ấy',
-        'Ngồi Chờ Trong Vấn Vương - feat. Mỹ Anh',
-        'Dành Hết Xuân Thì Để Chờ Nhau - feat. Hà Anh Tuấn',
-        'Những Lời Hứa Bỏ Quên - feat. Dear Jane',
-        'Bình Yên - feat. Binz'
-      ];
-    } else if (albumTitle.toLowerCase().contains('show của đen')) {
-      return [
-        'Mơ (ft. Hậu Vi)',
-        'Ngày Lang Thang',
-        '10 Triệu Năm',
-        'Mười Năm (ft. Ngọc Linh)'      ];    } else if (albumTitle.toLowerCase().contains('lặng')) {      return [
-        '1000 Ánh Mắt (ft. Obito)',
-        'Anh Vẫn Đợi',
-        'Có Đôi Điều',
-        'Lặng',
-        'Night Time'
-      ];
-    } else if (albumTitle.toLowerCase().contains('phép màu') || albumTitle == 'Phép Màu') {
-      return [
-        'Phép Màu (Đàn Cá Gỗ OST)'
-      ];
-    } else if (albumTitle.toLowerCase().contains('jumping machine')) {
-      return [
-        'Jumping Machine'
-      ];
-    }
-    return List.generate(10, (index) => 'Track ${index + 1}');
-  }
 
   @override
   void initState() {
@@ -72,7 +38,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
 
   // Check if album is already downloaded
   Future<void> _checkDownloadStatus() async {
-    final isDownloaded = await DownloadService.isAlbumDownloaded(widget.id);
+    final isDownloaded = await DownloadService.isAlbumDownloaded(widget.albumId);
     if (mounted) {
       setState(() {
         _isDownloaded = isDownloaded;
@@ -90,7 +56,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
           backgroundColor: AppColors.spotifyGrey,
           title: Text('Xác nhận xóa', style: AppTextStyles.bodyText),
           content: Text(
-            'Bạn có chắc chắn muốn xóa album "${widget.title}" khỏi danh sách tải xuống?',
+            'Bạn có chắc chắn muốn xóa album "${widget.albumTitle}" khỏi danh sách tải xuống?',
             style: AppTextStyles.smallText,
           ),
           actions: [
@@ -107,7 +73,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
       );
 
       if (shouldDelete == true) {
-        final deleted = await DownloadService.deleteDownloadedAlbum(widget.id);
+        final deleted = await DownloadService.deleteDownloadedAlbum(widget.albumId);
         if (mounted) {
           setState(() {
             _isDownloaded = !deleted;
@@ -134,8 +100,8 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
       
       final success = await DownloadService.downloadAlbumCover(
         widget.imageAsset,
-        widget.id,
-        widget.title,
+        widget.albumId,
+        widget.albumTitle,
       );
       
       if (mounted) {
@@ -146,8 +112,8 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
         if (success) {
           // Show success dialog with option to view downloaded albums
           final dialogMessage = kIsWeb 
-            ? 'Album "${widget.title}" đã được thêm vào danh sách nhạc đã tải. Lưu ý: Trên nền tảng web, các tệp không được tải về thiết bị.'
-            : 'Album "${widget.title}" đã được thêm vào danh sách nhạc đã tải. Bạn có thể nghe ngay cả khi không có kết nối mạng.';
+            ? 'Album "${widget.albumTitle}" đã được thêm vào danh sách nhạc đã tải. Lưu ý: Trên nền tảng web, các tệp không được tải về thiết bị.'
+            : 'Album "${widget.albumTitle}" đã được thêm vào danh sách nhạc đã tải. Bạn có thể nghe ngay cả khi không có kết nối mạng.';
             
           showDialog(
             context: context,
@@ -193,10 +159,23 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
     }
   }
 
+  List<String> _getTrackNames() {
+    if (widget.albumTitle.toLowerCase().contains('phép màu')) {
+      return [
+        'Phép Màu (Đàn Cá Gỗ OST)'
+      ];
+    } else if (widget.albumTitle.toLowerCase().contains('jumping machine')) {
+      return [
+        'Jumping Machine'
+      ];
+    }
+    return ['Track 1']; // Fallback
+  }
   @override
   Widget build(BuildContext context) {
+    final trackList = _getTrackNames();
     final favoritesService = Provider.of<FavoritesService>(context);
-    final isFavorite = favoritesService.isFavorite(widget.id);
+    final isFavorite = favoritesService.isFavorite(widget.albumId);
 
     return Scaffold(
       backgroundColor: AppColors.spotifyBlack,
@@ -206,7 +185,8 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
           SliverAppBar(
             expandedHeight: 300,
             pinned: true,
-            flexibleSpace: FlexibleSpaceBar(              background: Stack(
+            flexibleSpace: FlexibleSpaceBar(
+              background: Stack(
                 fit: StackFit.expand,
                 children: [
                   // Album Image
@@ -239,7 +219,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.title,
+                          widget.albumTitle,
                           style: AppTextStyles.heading.copyWith(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -247,7 +227,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          widget.description,
+                          widget.albumDescription,
                           style: AppTextStyles.bodyText,
                         ),
                       ],
@@ -279,7 +259,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
                           color: isFavorite ? Colors.red : AppColors.spotifyLightGrey,
                         ),
                         onPressed: () {
-                          favoritesService.toggleFavorite(widget.id);
+                          favoritesService.toggleFavorite(widget.albumId);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
@@ -300,7 +280,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
                             ? Icons.download_done_outlined 
                             : Icons.file_download_outlined,
                           color: _isDownloaded 
-                            ? AppColors.spotifyGreen 
+                            ? AppColors.spotifyGreen
                             : AppColors.spotifyLightGrey,
                         ),
                         onPressed: () => _handleDownload(context),
@@ -314,35 +294,13 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
                         onPressed: () {},
                       ),
                     ],
-                  ),                  // Play button that starts playing from track 1
+                  ),
+                  // Play all button
                   FloatingActionButton(
                     backgroundColor: AppColors.spotifyGreen,
                     onPressed: () {
-                      // Get the music service
-                      final musicService = Provider.of<MusicPlayerService>(context, listen: false);
-                      
                       // Play the first track
-                      musicService.playTrack(CurrentTrack(
-                        title: _getTrackNames(widget.title).first,
-                        albumTitle: widget.title,
-                        imageAsset: widget.imageAsset,
-                        trackNumber: 1,
-                        totalTracks: _getTrackNames(widget.title).length,
-                      ));
-                      
-                      // Navigate to the player screen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PlayerScreen(
-                            title: _getTrackNames(widget.title).first,
-                            imageAsset: widget.imageAsset,
-                            currentTrack: 1,
-                            totalTracks: _getTrackNames(widget.title).length,
-                            albumTitle: widget.title,
-                          ),
-                        ),
-                      );
+                      _playTrack(context, 0);
                     },
                     mini: false,
                     child: const Icon(Icons.play_arrow),
@@ -352,66 +310,93 @@ class _AlbumDetailScreenState extends State<AlbumDetailScreen> {
             ),
           ),
 
-          // Songs list
-          SliverList(            delegate: SliverChildBuilderDelegate(
-              (context, index) {                // Special handling for albums' tracks
-                final trackNames = _getTrackNames(widget.title);
-                if (index < trackNames.length) {
+          // Title section
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                "Chọn bài hát",
+                style: AppTextStyles.heading.copyWith(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),          // Track list
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                if (index < trackList.length) {
                   return ListTile(
-                    leading: Text(
-                      '${index + 1}',
-                      style: AppTextStyles.bodyText.copyWith(
-                        color: AppColors.spotifyLightGrey,
+                    leading: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: AppColors.spotifyGreen,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.music_note,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                     title: Text(
-                      trackNames[index],
+                      trackList[index],
                       style: AppTextStyles.bodyText,
                     ),
                     subtitle: Text(
-                      index == 0 ? '320K plays' : '280K plays',
+                      widget.albumTitle,
                       style: AppTextStyles.smallText,
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(
-                        Icons.more_vert,
-                        color: AppColors.spotifyLightGrey,
-                      ),
-                      onPressed: () {},
-                    ),                    onTap: () {
-                      // Get the music service
-                      final musicService = Provider.of<MusicPlayerService>(context, listen: false);
-                      
-                      // Play the selected track
-                      musicService.playTrack(CurrentTrack(
-                        title: trackNames[index],
-                        albumTitle: widget.title,
-                        imageAsset: widget.imageAsset,
-                        trackNumber: index + 1,
-                        totalTracks: trackNames.length,
-                      ));
-                      
-                      // Navigate to player screen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PlayerScreen(
-                            title: trackNames[index],
-                            imageAsset: widget.imageAsset,
-                            currentTrack: index + 1,
-                            totalTracks: trackNames.length,
-                            albumTitle: widget.title,
-                          ),
-                        ),
-                      );
+                    trailing: const Icon(
+                      Icons.play_circle_filled,
+                      color: AppColors.spotifyGreen,
+                      size: 40,
+                    ),
+                    onTap: () {
+                      _playTrack(context, index);
                     },
                   );
                 }
                 return null;
-              },              childCount: _getTrackNames(widget.title).length,
+              },
+              childCount: trackList.length,
             ),
           ),
         ],
+      ),
+    );
+  }
+  
+  // Helper method to play a track
+  void _playTrack(BuildContext context, int index) {
+    final trackList = _getTrackNames();
+    
+    // Get the music service
+    final musicService = Provider.of<MusicPlayerService>(context, listen: false);
+    
+    // Play the selected track
+    musicService.playTrack(CurrentTrack(
+      title: trackList[index],
+      albumTitle: widget.albumTitle,
+      imageAsset: widget.imageAsset,
+      trackNumber: index + 1,
+      totalTracks: trackList.length,
+    ));
+    
+    // Navigate to player screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PlayerScreen(
+          title: trackList[index],
+          imageAsset: widget.imageAsset,
+          currentTrack: index + 1,
+          totalTracks: trackList.length,
+          albumTitle: widget.albumTitle,
+        ),
       ),
     );
   }

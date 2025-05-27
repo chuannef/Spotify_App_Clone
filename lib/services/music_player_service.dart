@@ -122,9 +122,8 @@ class MusicPlayerService with ChangeNotifier {
           'Night Time.mp3'
         ];
         int index = (track.trackNumber! - 1) % trackFiles.length;
-        audioPath = 'assets/sound/Lặng/${trackFiles[index]}';
-      } else if (track.title.toLowerCase().contains('jumping machine') || 
-                 track.albumTitle.toLowerCase().contains('jumping machine')) {
+        audioPath = 'assets/sound/Lặng/${trackFiles[index]}';      } else if (track.albumTitle.toLowerCase().contains('jumping machine') || 
+                 track.title.toLowerCase().contains('jumping machine')) {
         audioPath = 'assets/sound/Jumping machine.mp3';
       }
       
